@@ -6,6 +6,7 @@ export default function Hero() {
           <h1 className="text-4xl md:text-6xl font-extrabold bg-gradient-to-r from-indigo-500 to-pink-500 bg-clip-text text-transparent mb-6">
             Bienvenue sur LocaFlow
           </h1>
+
           <p className="text-lg md:text-xl text-slate-500 mb-10">
             Simplifiez la gestion locative : dépôt de bien, recherche de logement, automatisation des démarches.
           </p>
@@ -15,16 +16,32 @@ export default function Hero() {
               className="inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-500 px-6 py-3 text-white font-semibold hover:bg-indigo-600 transition"
               href="/auth/login?role=owner"
             >
-              🏠 Propriétaire
+              Propriétaire
             </a>
 
             <a
-             className="btn bg-gradient-to-r from-purple-500 via-pink-500 to-rose-500 text-white hover:from-purple-600 hover:to-rose-600"
+              className="inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-purple-500 via-pink-500 to-rose-500 px-6 py-3 text-white font-semibold hover:from-purple-600 hover:to-rose-600 transition"
               href="/auth/login?role=tenant"
             >
-              🔑 Locataire
+              Locataire
             </a>
           </div>
+
+          {/* Vidéo intégrée optionnelle */}
+          {/* 
+          <div className="mt-12">
+            <video
+              className="rounded-xl shadow-xl mx-auto max-w-3xl"
+              autoPlay
+              loop
+              muted
+              playsInline
+            >
+              <source src="/videos/interior-department-room.mp4" type="video/mp4" />
+              Votre navigateur ne supporte pas la vidéo HTML5.
+            </video>
+          </div>
+          */}
         </div>
       </div>
     </section>
