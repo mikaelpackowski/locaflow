@@ -43,7 +43,13 @@ export default function Hero() {
           </div>
         </div>
       </div>
-      <div className="mt-16 border-t border-gray-200"></div>
+<div className="mt-16 flex items-center justify-center">
+  <div className="flex items-center space-x-4">
+    <div className="h-px w-16 bg-gradient-to-r from-transparent to-indigo-200/50"></div>
+    <span className="text-sm text-indigo-400">Fonctionnalités</span>
+    <div className="h-px w-16 bg-gradient-to-l from-transparent to-indigo-200/50"></div>
+  </div>
+</div>
     </section>
   );
 }
