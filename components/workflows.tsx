@@ -14,7 +14,7 @@ export default function Workflows() {
             <div className="flex items-center justify-center gap-3 pb-3">
   <div className="h-px w-16 bg-gradient-to-r from-transparent to-indigo-200/50"></div>
   <span className="text-sm bg-gradient-to-r from-indigo-500 to-indigo-200 bg-clip-text text-transparent">
-    Nos fonctionnalités clés
+    Fonctionnalités
   </span>
   <div className="h-px w-16 bg-gradient-to-l from-transparent to-indigo-200/50"></div>
 </div>
