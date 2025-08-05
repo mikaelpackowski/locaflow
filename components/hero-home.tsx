@@ -43,6 +43,7 @@ export default function Hero() {
           </div>
         </div>
       </div>
+      <div className="mt-16 border-t border-gray-200"></div>
     </section>
   );
 }
