@@ -19,7 +19,7 @@ export default function Hero() {
             </a>
 
             <a
-              className="inline-flex items-center justify-center gap-2 rounded-lg bg-slate-800 px-6 py-3 text-white font-semibold hover:bg-slate-700 transition"
+             className="btn bg-gradient-to-r from-purple-500 via-pink-500 to-rose-500 text-white hover:from-purple-600 hover:to-rose-600"
               href="/auth/login?role=tenant"
             >
               🔑 Locataire
