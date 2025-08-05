@@ -27,8 +27,7 @@ export default function Hero() {
             </a>
           </div>
 
-          {/* Vidéo intégrée optionnelle */}
-          {/* 
+          {/* ✅ Bloc vidéo activé */}
           <div className="mt-12">
             <video
               className="rounded-xl shadow-xl mx-auto max-w-3xl"
@@ -41,7 +40,6 @@ export default function Hero() {
               Votre navigateur ne supporte pas la vidéo HTML5.
             </video>
           </div>
-          */}
         </div>
       </div>
     </section>
