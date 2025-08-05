@@ -19,12 +19,13 @@ export default function Hero() {
               Propriétaire
             </a>
 
-            <a
-              className="inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-purple-500 via-pink-500 to-rose-500 px-6 py-3 text-white font-semibold hover:from-purple-600 hover:to-rose-600 transition"
-              href="/auth/login?role=tenant"
-            >
-              Locataire
-            </a>
+          <a
+  className="inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-500 px-6 py-3 text-white font-semibold shadow-lg hover:bg-indigo-600 transition"
+  href="/auth/login?role=tenant"
+>
+  Locataire
+</a>
+
           </div>
 
           {/* ✅ Bloc vidéo activé */}
