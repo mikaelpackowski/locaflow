@@ -11,11 +11,14 @@ export default function Workflows() {
         <div className="pb-12 md:pb-20">
           {/* Section header */}
           <div className="mx-auto max-w-3xl pb-12 text-center md:pb-20">
-            <div className="inline-flex items-center gap-3 pb-3 before:h-px before:w-8 before:bg-gradient-to-r before:from-transparent before:to-indigo-200/50 after:h-px after:w-8 after:bg-gradient-to-l after:from-transparent after:to-indigo-200/50">
-              <span className="inline-flex bg-gradient-to-r from-indigo-500 to-indigo-200 bg-clip-text text-transparent">
-                Tailored Workflows
-              </span>
-            </div>
+            <div className="flex items-center justify-center gap-3 pb-3">
+  <div className="h-px w-16 bg-gradient-to-r from-transparent to-indigo-200/50"></div>
+  <span className="text-sm bg-gradient-to-r from-indigo-500 to-indigo-200 bg-clip-text text-transparent">
+    Nos fonctionnalités clés
+  </span>
+  <div className="h-px w-16 bg-gradient-to-l from-transparent to-indigo-200/50"></div>
+</div>
+
             <h2 className="text-3xl md:text-4xl font-extrabold animate-[gradient_8s_linear_infinite] bg-[linear-gradient(to_right,#4f46e5,#8b5cf6,#ec4899,#4f46e5)] bg-[length:200%_auto] bg-clip-text text-transparent">
               Comment fonctionne LocaFlow
             </h2>
