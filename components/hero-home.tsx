@@ -24,13 +24,6 @@ export default function Hero() {
             >
               🔑 Locataire
             </a>
-
-            <a
-              className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-300 px-6 py-3 text-slate-800 font-semibold hover:bg-slate-100 transition"
-              href="/annonces"
-            >
-              📢 Nos annonces
-            </a>
           </div>
         </div>
       </div>
