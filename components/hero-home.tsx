@@ -45,8 +45,6 @@ export default function Hero() {
         </div>
       </section>
 
-      {/* ✅ Séparateur bien visible en dehors du bloc */}
-      <div className="border-t border-gray-200 w-full mx-auto max-w-6xl px-4 sm:px-6" />
     </>
   );
 }
