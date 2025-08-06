@@ -43,11 +43,6 @@ export default function Hero() {
           </div>
         </div>
       </div>
-<div className="mt-16 flex items-center justify-center">
-  <div className="flex items-center space-x-4">
-    <div className="h-px w-16 bg-gradient-to-l from-transparent to-indigo-200/50"></div>
-  </div>
-</div>
 
 {/* Séparateur entre Hero et Workflow */}
 <div className="pt-16 md:pt-24 border-t border-gray-200 w-full mx-auto max-w-6xl px-4 sm:px-6" />
