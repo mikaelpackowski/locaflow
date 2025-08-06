@@ -29,7 +29,7 @@ export default function Hero() {
             </div>
 
             {/* ✅ Bloc vidéo activé */}
-            <div className="mt-12">
+            <div className="mt-12 mb-20"> {/* Ajout d’un margin-bottom ici */}
               <video
                 className="rounded-xl shadow-xl mx-auto max-w-3xl"
                 autoPlay
@@ -45,8 +45,8 @@ export default function Hero() {
         </div>
       </section>
 
-      {/* ✅ Séparateur entre Hero et le bloc suivant */}
-      <div className="pt-16 md:pt-24 border-t border-gray-200 w-full mx-auto max-w-6xl px-4 sm:px-6" />
+      {/* ✅ Séparateur bien visible en dehors du bloc */}
+      <div className="border-t border-gray-200 w-full mx-auto max-w-6xl px-4 sm:px-6" />
     </>
   );
 }
