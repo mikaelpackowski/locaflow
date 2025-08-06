@@ -43,6 +43,8 @@ export default function Hero() {
           </div>
         </div>
       </div>
+       {/* ✅ Séparateur intégré dans la section */}
+      <div className="pt-16 md:pt-24 border-t border-gray-200 w-full mx-auto max-w-6xl px-4 sm:px-6" />
   </section>
   );
 }
