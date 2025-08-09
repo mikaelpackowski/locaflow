@@ -1,12 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
-import { getBySlug, LISTINGS } from "@/utils/listings";
+import { notFound } from "next/navigation";
+import { LISTINGS, getBySlug } from "@/utils/listings";
 
-export async function generateStaticParams() {
+// Pre-generate static paths from local data
+export function generateStaticParams() {
   return LISTINGS.map((l) => ({ slug: l.slug }));
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
+// Optional: nicer <title> per listing
+export function generateMetadata({ params }: { params: { slug: string } }) {
   const item = getBySlug(params.slug);
   return {
     title: item ? `${item.title} – ${item.city} | LocaFlow` : "Annonce | LocaFlow",
@@ -15,32 +18,20 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 
 export default function ListingDetailPage({ params }: { params: { slug: string } }) {
   const listing = getBySlug(params.slug);
-  if (!listing) {
-    return (
-      <main className="mx-auto max-w-6xl px-4 sm:px-6 py-16">
-        <p>Annonce introuvable.</p>
-        <Link href="/annonces" className="text-indigo-600 hover:underline">
-          ← Retour aux annonces
-        </Link>
-      </main>
-    );
-  }
+  if (!listing) return notFound();
 
   return (
     <main className="mx-auto max-w-6xl px-4 sm:px-6 py-12">
       {/* Fil d’Ariane */}
       <nav className="text-sm text-gray-500">
-        <Link href="/annonces" className="hover:text-gray-700">
-          Annonces
-        </Link>{" "}
-        / <span className="text-gray-700">{listing.title}</span>
+        <Link href="/annonces" className="hover:text-gray-700">Annonces</Link> /{" "}
+        <span className="text-gray-700">{listing.title}</span>
       </nav>
 
       <header className="mt-3">
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900">{listing.title}</h1>
         <p className="mt-1 text-gray-600">
-          {listing.city}
-          {listing.district ? ` – ${listing.district}` : ""} · {listing.surface} m²
+          {listing.city}{listing.district ? ` – ${listing.district}` : ""} · {listing.surface} m²
         </p>
         <p className="mt-2 text-2xl font-semibold">
           {listing.price.toLocaleString("fr-FR")} € / mois
@@ -65,20 +56,16 @@ export default function ListingDetailPage({ params }: { params: { slug: string }
           <h3 className="mt-6 text-lg font-semibold">Atouts</h3>
           <ul className="mt-2 flex flex-wrap gap-2">
             {listing.features.map((f) => (
-              <li key={f} className="rounded-full bg-gray-100 px-3 py-1 text-sm">
-                {f}
-              </li>
+              <li key={f} className="rounded-full bg-gray-100 px-3 py-1 text-sm">{f}</li>
             ))}
           </ul>
         </div>
 
-        {/* Encadré contact / CTA */}
+        {/* Encadré contact */}
         <aside className="rounded-2xl border p-5 shadow-sm">
           <p className="text-sm text-gray-600">Intéressé par ce bien ?</p>
           <a
-            href={`mailto:contact@locaflow.example?subject=Infos ${encodeURIComponent(
-              listing.title
-            )}`}
+            href={`mailto:contact@locaflow.example?subject=Infos ${encodeURIComponent(listing.title)}`}
             className="mt-3 inline-flex w-full items-center justify-center rounded-lg bg-indigo-600 px-4 py-2 font-semibold text-white hover:bg-indigo-500"
           >
             Contacter
