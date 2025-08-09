@@ -17,7 +17,7 @@ export default function PresentationPage() {
         {/* Section 1 */}
         <div className="grid md:grid-cols-2 gap-12 items-center mb-20">
           <img
-            src="/images/dashboard-preview.jpg"
+            src="/images/dashboard-illustration.jpg"
             alt="Aperçu du tableau de bord"
             className="rounded-xl shadow-lg"
           />
@@ -55,7 +55,7 @@ export default function PresentationPage() {
             </ul>
           </div>
           <img
-            src="/images/automation-preview.jpg"
+            src="/images/automation-illustration.jpg"
             alt="Automatisation intelligente"
             className="rounded-xl shadow-lg"
           />
