@@ -37,10 +37,10 @@ export default function Hero() {
 
             {/* Boutons */}
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row sm:gap-4">
-              {/* Primaire : dégradé */}
+              {/* Primaire : violet uni */}
               <a
                 href="/auth/login"
-                className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-indigo-500 via-violet-500 to-pink-500 px-7 py-3 text-white font-semibold shadow-lg shadow-black/20 transition hover:opacity-90 hover:-translate-y-0.5 active:translate-y-0"
+                className="inline-flex items-center justify-center rounded-full bg-violet-500 px-7 py-3 text-white font-semibold shadow-lg shadow-black/20 transition hover:bg-violet-600 hover:-translate-y-0.5 active:translate-y-0"
               >
                 Commencer maintenant
               </a>
@@ -57,7 +57,7 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Séparateur sous le header (style Cruip) */}
+      {/* Séparateur sous le header */}
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="border-t border-gray-200 py-12 md:py-16" />
       </div>
