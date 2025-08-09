@@ -1,100 +1,80 @@
-// app/annonces/page.tsx
-"use client";
+import ListingCard from "@/components/ListingCard";
+import { searchListings } from "@/utils/listings";
 
-import { useState, useEffect } from "react";
-import { createClient } from "@supabase/supabase-js";
+export const metadata = {
+  title: "Annonces | LocaFlow",
+  description: "Trouvez votre logement et filtrez les annonces selon vos critères.",
+};
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+type PageProps = {
+  searchParams?: { q?: string; max?: string; type?: string };
+};
 
-export default function AnnoncesPage() {
-  const [annonces, setAnnonces] = useState<any[]>([]);
-  const [ville, setVille] = useState("");
-  const [budget, setBudget] = useState("");
-  const [type, setType] = useState("");
+export default function AnnoncesPage({ searchParams }: PageProps) {
+  const q = searchParams?.q ?? "";
+  const max = Number(searchParams?.max) || undefined;
+  const type = (searchParams?.type as any) || "all";
 
-  const fetchAnnonces = async () => {
-    let query = supabase.from("annonces").select("*");
-
-    if (ville) query = query.ilike("ville", `%${ville}%`);
-    if (budget) query = query.lte("loyer", Number(budget));
-    if (type) query = query.eq("type", type);
-
-    const { data, error } = await query;
-
-    if (error) {
-      console.error(error);
-    } else {
-      setAnnonces(data || []);
-    }
-  };
-
-  useEffect(() => {
-    fetchAnnonces();
-  }, []);
+  const results = searchListings({ q, max, type });
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-12">
-      <h1 className="text-3xl font-bold text-center mb-8">Annonces</h1>
+    <main className="mx-auto max-w-6xl px-4 sm:px-6 py-14">
+      <h1 className="text-3xl font-bold text-gray-900 text-center">Annonces</h1>
+      <p className="mt-2 text-center text-gray-500">
+        Explorez les biens disponibles et filtrez selon vos critères.
+      </p>
 
-      {/* Filtres */}
-      <div className="flex flex-wrap gap-4 mb-8 justify-center">
+      {/* Barre de recherche (GET) */}
+      <form
+        method="GET"
+        className="mt-8 grid grid-cols-1 gap-3 md:grid-cols-[1fr_180px_160px_auto]"
+      >
         <input
+          name="q"
+          defaultValue={q}
           placeholder="Ville, quartier..."
-          value={ville}
-          onChange={(e) => setVille(e.target.value)}
-          className="border rounded-lg px-4 py-2"
+          className="rounded-lg border px-3 py-2"
         />
         <input
-          type="number"
+          name="max"
+          defaultValue={searchParams?.max ?? ""}
           placeholder="Budget max (€)"
-          value={budget}
-          onChange={(e) => setBudget(e.target.value)}
-          className="border rounded-lg px-4 py-2"
+          inputMode="numeric"
+          className="rounded-lg border px-3 py-2"
         />
         <select
-          value={type}
-          onChange={(e) => setType(e.target.value)}
-          className="border rounded-lg px-4 py-2"
+          name="type"
+          defaultValue={type}
+          className="rounded-lg border px-3 py-2"
         >
-          <option value="">Type</option>
-          <option value="Appartement">Appartement</option>
-          <option value="Maison">Maison</option>
+          <option value="all">Type (tous)</option>
+          <option value="studio">Studio</option>
+          <option value="T1">T1</option>
+          <option value="T2">T2</option>
+          <option value="T3">T3</option>
+          <option value="maison">Maison</option>
         </select>
+
         <button
-          onClick={fetchAnnonces}
-          className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-500"
+          type="submit"
+          className="rounded-lg bg-indigo-600 px-4 py-2 font-semibold text-white hover:bg-indigo-500"
         >
           Rechercher
         </button>
-      </div>
+      </form>
 
-      {/* Liste des annonces */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {annonces.map((a) => (
-          <div
-            key={a.id}
-            className="border rounded-lg shadow hover:shadow-lg transition overflow-hidden"
-          >
-            {a.images && a.images[0] && (
-              <img src={a.images[0]} alt={a.titre} className="w-full h-48 object-cover" />
-            )}
-            <div className="p-4">
-              <h2 className="font-bold text-lg">{a.titre}</h2>
-              <p className="text-sm text-gray-500">{a.surface} m² - {a.ville}</p>
-              <p className="text-indigo-600 font-semibold">{a.loyer} € / mois</p>
-              <a
-                href={`/annonces/${a.id}`}
-                className="text-blue-600 hover:underline text-sm mt-2 inline-block"
-              >
-                Voir le détail
-              </a>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
+      {/* Résultats */}
+      {results.length === 0 ? (
+        <p className="mt-10 text-center text-gray-500">
+          Aucune annonce ne correspond à vos critères.
+        </p>
+      ) : (
+        <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {results.map((l) => (
+            <ListingCard key={l.id} listing={l} />
+          ))}
+        </div>
+      )}
+    </main>
   );
 }
