@@ -1,11 +1,38 @@
 import { NextResponse } from "next/server";
 import { LISTINGS } from "@/utils/listings";
 
-export async function GET(_req: Request, context: any) {
-  const slug = context?.params?.slug as string | undefined;
-  const item = LISTINGS.find((l) => l.slug === slug);
-  if (!item) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
-  }
-  return NextResponse.json(item);
+function filterAndSort({ q, max, type, sort }:{
+  q?: string; max?: number; type?: string; sort?: "price_asc" | "price_desc";
+}) {
+  const needle = (q ?? "").trim().toLowerCase();
+  let items = LISTINGS.filter((l) => {
+    const matchQ = !needle
+      || l.city.toLowerCase().includes(needle)
+      || (l.district ?? "").toLowerCase().includes(needle)
+      || l.title.toLowerCase().includes(needle);
+    const matchMax = !max || l.price <= max;
+    const matchType = !type || type === "all" || l.type === type;
+    return matchQ && matchMax && matchType;
+  });
+  if (sort === "price_asc") items.sort((a, b) => a.price - b.price);
+  if (sort === "price_desc") items.sort((a, b) => b.price - a.price);
+  return items;
+}
+
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const q = searchParams.get("q") ?? undefined;
+  const max = searchParams.get("max") ? Number(searchParams.get("max")) : undefined;
+  const type = searchParams.get("type") ?? undefined;
+  const sort = (searchParams.get("sort") as "price_asc" | "price_desc" | null) ?? undefined;
+
+  const page = Math.max(1, Number(searchParams.get("page") ?? 1));
+  const limit = Math.min(30, Math.max(1, Number(searchParams.get("limit") ?? 9)));
+
+  const filtered = filterAndSort({ q, max, type, sort });
+  const total = filtered.length;
+  const pages = Math.max(1, Math.ceil(total / limit));
+  const items = filtered.slice((page - 1) * limit, (page - 1) * limit + limit);
+
+  return NextResponse.json({ items, total, page, limit, pages });
 }
