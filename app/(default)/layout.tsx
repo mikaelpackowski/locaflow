@@ -1,31 +1,12 @@
-"use client";
-
-import { useEffect } from "react";
-
-import AOS from "aos";
-import "aos/dist/aos.css";
-
+import Header from "@/components/ui/header";
 import Footer from "@/components/ui/footer";
 
-export default function DefaultLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  useEffect(() => {
-    AOS.init({
-      once: true,
-      disable: "phone",
-      duration: 600,
-      easing: "ease-out-sine",
-    });
-  });
-
+export default function DefaultLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <>
- <main className="relative flex grow flex-col bg-white text-gray-900">
-       {children}
- </main>
-    </>
+    <main className="relative flex min-h-screen flex-col bg-white text-gray-900">
+      <Header />
+      {children}
+      <Footer />
+    </main>
   );
 }
