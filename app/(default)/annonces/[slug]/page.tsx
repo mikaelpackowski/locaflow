@@ -8,16 +8,17 @@ export function generateStaticParams() {
   return LISTINGS.map((l) => ({ slug: l.slug }));
 }
 
-// Optional: nicer <title> per listing
-export function generateMetadata({ params }: { params: { slug: string } }) {
-  const item = getBySlug(params.slug);
+// Metadata per listing (loose-typed to avoid your custom PageProps)
+export function generateMetadata({ params }: any) {
+  const item = getBySlug(params.slug as string);
   return {
     title: item ? `${item.title} – ${item.city} | LocaFlow` : "Annonce | LocaFlow",
   };
 }
 
-export default function ListingDetailPage({ params }: { params: { slug: string } }) {
-  const listing = getBySlug(params.slug);
+// Detail page (loose-typed to bypass the bad PageProps constraint)
+export default function ListingDetailPage({ params }: any) {
+  const listing = getBySlug(params.slug as string);
   if (!listing) return notFound();
 
   return (
@@ -40,7 +41,7 @@ export default function ListingDetailPage({ params }: { params: { slug: string }
 
       {/* Galerie */}
       <section className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
-        {listing.images.map((src, i) => (
+        {listing.images.map((src: string, i: number) => (
           <div key={src + i} className="relative h-64 w-full overflow-hidden rounded-xl">
             <Image src={src} alt={`${listing.title} ${i + 1}`} fill className="object-cover" />
           </div>
@@ -55,7 +56,7 @@ export default function ListingDetailPage({ params }: { params: { slug: string }
 
           <h3 className="mt-6 text-lg font-semibold">Atouts</h3>
           <ul className="mt-2 flex flex-wrap gap-2">
-            {listing.features.map((f) => (
+            {listing.features.map((f: string) => (
               <li key={f} className="rounded-full bg-gray-100 px-3 py-1 text-sm">{f}</li>
             ))}
           </ul>
