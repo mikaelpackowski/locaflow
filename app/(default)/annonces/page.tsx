@@ -1,5 +1,6 @@
 import ListingCard from "@/components/ListingCard";
-import { searchListings } from "@/utils/listings";
+import { LISTINGS, searchListings } from "@/utils/listings";
+import SearchBar from "@/components/SearchBar";
 
 export const metadata = {
   title: "Annonces | LocaFlow",
@@ -17,6 +18,17 @@ export default function AnnoncesPage({ searchParams }: PageProps) {
 
   const results = searchListings({ q, max, type });
 
+  // 🔹 listes uniques pour l’auto-complétion & les chips
+  const cities = Array.from(
+    new Set(
+      LISTINGS.flatMap((l) =>
+        [l.city, l.district].filter(Boolean).map((x) => x!.trim()),
+      ),
+    ),
+  ).sort((a, b) => a.localeCompare(b, "fr"));
+
+  const types = Array.from(new Set(LISTINGS.map((l) => l.type)));
+
   return (
     <main className="mx-auto max-w-6xl px-4 sm:px-6 py-14">
       <h1 className="text-3xl font-bold text-gray-900 text-center">Annonces</h1>
@@ -24,44 +36,14 @@ export default function AnnoncesPage({ searchParams }: PageProps) {
         Explorez les biens disponibles et filtrez selon vos critères.
       </p>
 
-      {/* Barre de recherche (GET) */}
-      <form
-        method="GET"
-        className="mt-8 grid grid-cols-1 gap-3 md:grid-cols-[1fr_180px_160px_auto]"
-      >
-        <input
-          name="q"
-          defaultValue={q}
-          placeholder="Ville, quartier..."
-          className="rounded-lg border px-3 py-2"
-        />
-        <input
-          name="max"
-          defaultValue={searchParams?.max ?? ""}
-          placeholder="Budget max (€)"
-          inputMode="numeric"
-          className="rounded-lg border px-3 py-2"
-        />
-        <select
-          name="type"
-          defaultValue={type}
-          className="rounded-lg border px-3 py-2"
-        >
-          <option value="all">Type (tous)</option>
-          <option value="studio">Studio</option>
-          <option value="T1">T1</option>
-          <option value="T2">T2</option>
-          <option value="T3">T3</option>
-          <option value="maison">Maison</option>
-        </select>
-
-        <button
-          type="submit"
-          className="rounded-lg bg-indigo-600 px-4 py-2 font-semibold text-white hover:bg-indigo-500"
-        >
-          Rechercher
-        </button>
-      </form>
+      {/* 🔎 Barre de recherche (client) */}
+      <SearchBar
+        defaultQuery={q}
+        defaultMax={searchParams?.max ?? ""}
+        defaultType={type}
+        cities={cities}
+        types={types}
+      />
 
       {/* Résultats */}
       {results.length === 0 ? (
