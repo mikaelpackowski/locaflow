@@ -15,8 +15,7 @@ function buildBaseUrl() {
   return `${proto}://${host}`;
 }
 
-export default async function AnnoncesPage({ searchParams }: any) {
-  // ✅ Next 15 peut fournir un Promise ici → on l'attend
+export default async function AnnoncesPage({ searchParams }: { searchParams?: SearchParamsInput }) {
   const sp = (await searchParams) ?? {};
   const q = sp.q ?? "";
   const max = sp.max ?? "";
@@ -27,9 +26,9 @@ export default async function AnnoncesPage({ searchParams }: any) {
 
   const base = buildBaseUrl();
   const url = new URL(`${base}/api/annonces`);
-  if (q) url.searchParams.set("q", q);
-  if (max) url.searchParams.set("max", max);
-  if (type && type !== "all") url.searchParams.set("type", type);
+  if (q) url.searchParams.set("q", String(q));
+  if (max) url.searchParams.set("max", String(max));
+  if (type && type !== "all") url.searchParams.set("type", String(type));
   if (sort) url.searchParams.set("sort", sort);
   url.searchParams.set("page", String(page));
   url.searchParams.set("limit", String(limit));
@@ -38,30 +37,27 @@ export default async function AnnoncesPage({ searchParams }: any) {
   const data = await res.json();
 
   const cities = Array.from(
-    new Set(LISTINGS.flatMap((l) => [l.city, l.district].filter(Boolean) as string[]))
+    new Set(LISTINGS.flatMap((l) => [l.city, l.district].filter(Boolean) as string[])),
   ).sort((a, b) => a.localeCompare(b, "fr"));
+
   const types = Array.from(new Set(LISTINGS.map((l) => l.type)));
 
   return (
     <main className="mx-auto max-w-6xl px-4 sm:px-6 py-14">
       <h1 className="text-3xl font-bold text-gray-900 text-center">Annonces</h1>
-      <p className="mt-2 text-center text-gray-500">
-        Explorez les biens disponibles et filtrez selon vos critères.
-      </p>
+      <p className="mt-2 text-center text-gray-500">Explorez les biens disponibles et filtrez selon vos critères.</p>
 
       <SearchBar
-        defaultQuery={q}
-        defaultMax={max}
-        defaultType={type}
+        defaultQuery={String(q)}
+        defaultMax={String(max)}
+        defaultType={String(type)}
         defaultSort={sort ?? ""}
         cities={cities}
         types={types}
       />
 
       {data.items.length === 0 ? (
-        <p className="mt-10 text-center text-gray-500">
-          Aucune annonce ne correspond à vos critères.
-        </p>
+        <p className="mt-10 text-center text-gray-500">Aucune annonce ne correspond à vos critères.</p>
       ) : (
         <>
           <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -75,7 +71,12 @@ export default async function AnnoncesPage({ searchParams }: any) {
             page={data.page}
             pages={data.pages}
             limit={data.limit}
-            searchParams={sp}
+            searchParams={Object.fromEntries(new URLSearchParams({
+              q: String(q || ""),
+              max: String(max || ""),
+              type: String(type || ""),
+              sort: String(sort || ""),
+            }))}
           />
         </>
       )}
@@ -99,11 +100,11 @@ function Pagination({
   if (pages <= 1) return null;
 
   const makeLink = (p: number) => {
-    const sp = new URLSearchParams();
-    if (searchParams?.q) sp.set("q", searchParams.q);
-    if (searchParams?.max) sp.set("max", searchParams.max);
-    if (searchParams?.type) sp.set("type", searchParams.type);
-    if (searchParams?.sort) sp.set("sort", searchParams.sort);
+    const sp = new URLSearchParams(searchParams);
+    if (!sp.get("q")) sp.delete("q");
+    if (!sp.get("max")) sp.delete("max");
+    if (!sp.get("type") || sp.get("type") === "all") sp.delete("type");
+    if (!sp.get("sort")) sp.delete("sort");
     sp.set("page", String(p));
     sp.set("limit", String(limit));
     return `/annonces?${sp.toString()}`;
@@ -111,7 +112,7 @@ function Pagination({
 
   const pagesToShow = Array.from({ length: pages }, (_, i) => i + 1).slice(
     Math.max(0, page - 3),
-    Math.max(0, page - 3) + 5
+    Math.max(0, page - 3) + 5,
   );
 
   return (
