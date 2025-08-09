@@ -7,8 +7,9 @@ type Props = {
   defaultQuery?: string;
   defaultMax?: string;
   defaultType?: string;
-  cities: string[];            // ville + quartier uniques
-  types: string[];             // ["T2", "T3", "studio", ...]
+  defaultSort?: string;
+  cities: string[];
+  types: string[];
 };
 
 const PRICE_PRESETS = [700, 900, 1100, 1300, 1600];
@@ -17,6 +18,7 @@ export default function SearchBar({
   defaultQuery = "",
   defaultMax = "",
   defaultType = "all",
+  defaultSort = "",
   cities,
   types,
 }: Props) {
@@ -26,39 +28,50 @@ export default function SearchBar({
   const [q, setQ] = useState(defaultQuery);
   const [max, setMax] = useState(defaultMax);
   const [type, setType] = useState(defaultType);
+  const [sort, setSort] = useState(defaultSort);
 
-  // suggestions « intelligentes » (on filtre sur la frappe)
   const suggestions = useMemo(() => {
     const s = q.trim().toLowerCase();
     if (!s) return cities.slice(0, 8);
-    return cities
-      .filter((c) => c.toLowerCase().includes(s))
-      .slice(0, 8);
+    return cities.filter((c) => c.toLowerCase().includes(s)).slice(0, 8);
   }, [q, cities]);
 
-  function submit(params: { q?: string; max?: string; type?: string }) {
+  function submit(params: {
+    q?: string;
+    max?: string;
+    type?: string;
+    sort?: string;
+    page?: string;
+  }) {
     const next = new URLSearchParams(searchParams.toString());
     params.q !== undefined && next.set("q", params.q);
-    params.max !== undefined && (params.max ? next.set("max", params.max) : next.delete("max"));
-    params.type !== undefined && (params.type && params.type !== "all"
-      ? next.set("type", params.type)
-      : next.delete("type"));
+    params.max !== undefined &&
+      (params.max ? next.set("max", params.max) : next.delete("max"));
+    params.type !== undefined &&
+      (params.type && params.type !== "all"
+        ? next.set("type", params.type)
+        : next.delete("type"));
+    params.sort !== undefined &&
+      (params.sort ? next.set("sort", params.sort) : next.delete("sort"));
 
+    // on reset la pagination à 1 à chaque changement
+    next.set("page", "1");
+    // conserve limit si déjà présente
     router.push(`/annonces?${next.toString()}`);
   }
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    submit({ q, max, type });
+    submit({ q, max, type, sort, page: "1" });
   }
 
   return (
     <section className="mt-8 rounded-2xl border bg-white p-4 shadow-sm">
-      {/* Ligne principale */}
       <form
         onSubmit={onSubmit}
-        className="grid grid-cols-1 gap-3 md:grid-cols-[1fr_170px_170px_auto]"
+        className="grid grid-cols-1 gap-3 md:grid-cols-[1fr_160px_180px_180px_auto]"
       >
+        {/* Ville / quartier */}
         <div className="relative">
           <input
             value={q}
@@ -67,7 +80,6 @@ export default function SearchBar({
             className="w-full rounded-lg border px-3 py-2"
             aria-label="Ville ou quartier"
           />
-          {/* suggestions dropdown */}
           {q && suggestions.length > 0 && (
             <ul className="absolute z-10 mt-1 max-h-64 w-full overflow-auto rounded-lg border bg-white shadow">
               {suggestions.map((s) => (
@@ -76,7 +88,7 @@ export default function SearchBar({
                   className="cursor-pointer px-3 py-2 text-sm hover:bg-gray-50"
                   onMouseDown={() => {
                     setQ(s);
-                    submit({ q: s, max, type });
+                    submit({ q: s, max, type, sort, page: "1" });
                   }}
                 >
                   {s}
@@ -86,6 +98,7 @@ export default function SearchBar({
           )}
         </div>
 
+        {/* Budget */}
         <input
           value={max}
           onChange={(e) => setMax(e.target.value.replace(/[^\d]/g, ""))}
@@ -95,6 +108,7 @@ export default function SearchBar({
           className="rounded-lg border px-3 py-2"
         />
 
+        {/* Type */}
         <select
           value={type}
           onChange={(e) => setType(e.target.value)}
@@ -102,12 +116,23 @@ export default function SearchBar({
           aria-label="Type de bien"
         >
           <option value="all">Type (tous)</option>
-          {/* on garde l’ordre d’origine */}
           {types.map((t) => (
             <option key={t} value={t}>
               {t}
             </option>
           ))}
+        </select>
+
+        {/* Tri */}
+        <select
+          value={sort}
+          onChange={(e) => setSort(e.target.value)}
+          className="rounded-lg border px-3 py-2"
+          aria-label="Tri"
+        >
+          <option value="">Tri : par défaut</option>
+          <option value="price_asc">Prix croissant</option>
+          <option value="price_desc">Prix décroissant</option>
         </select>
 
         <button
@@ -118,16 +143,13 @@ export default function SearchBar({
         </button>
       </form>
 
-      {/* Raccourcis prix + chips type */}
+      {/* Raccourcis */}
       <div className="mt-3 flex flex-wrap items-center gap-2">
         <span className="mr-2 text-xs uppercase text-gray-400">Raccourcis</span>
         {PRICE_PRESETS.map((p) => (
           <button
             key={p}
-            onClick={() => {
-              setMax(String(p));
-              submit({ q, max: String(p), type });
-            }}
+            onClick={() => submit({ q, max: String(p), type, sort, page: "1" })}
             className="rounded-full border px-3 py-1 text-sm hover:bg-gray-50"
             type="button"
           >
@@ -138,14 +160,9 @@ export default function SearchBar({
         {types.map((t) => (
           <button
             key={t}
-            onClick={() => {
-              setType(t);
-              submit({ q, max, type: t });
-            }}
+            onClick={() => submit({ q, max, type: t, sort, page: "1" })}
             className={`rounded-full px-3 py-1 text-sm ${
-              type === t
-                ? "bg-indigo-600 text-white"
-                : "border hover:bg-gray-50"
+              type === t ? "bg-indigo-600 text-white" : "border hover:bg-gray-50"
             }`}
             type="button"
           >
@@ -154,10 +171,7 @@ export default function SearchBar({
         ))}
         {type !== "all" && (
           <button
-            onClick={() => {
-              setType("all");
-              submit({ q, max, type: "all" });
-            }}
+            onClick={() => submit({ q, max, type: "all", sort, page: "1" })}
             className="rounded-full border px-3 py-1 text-sm hover:bg-gray-50"
             type="button"
           >
